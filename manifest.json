@@ -8,11 +8,15 @@
     "desktopCapture",
     "tabs",
     "storage",
-    "downloads"
+    "downloads",
+    "sidePanel"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
   "action": {},
   "background": {
     "service_worker": "background.js"

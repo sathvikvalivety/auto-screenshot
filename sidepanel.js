@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     logDiv.scrollTop = logDiv.scrollHeight;
   }
 
-  // 1. Start Capture
   startBtn.addEventListener('click', () => {
     const intervalMins = parseFloat(intervalInput.value);
     
@@ -36,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       startBtn.style.display = 'none';
-      stopBtn.style.display = 'inline-block';
+      stopBtn.style.display = 'block';
       intervalInput.disabled = true;
       screenshotCount = 0;
 
@@ -60,10 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
           
-          // Start the interval
           intervalId = setInterval(takeAndSaveScreenshot, intervalMins * 60 * 1000);
           log(`Started interval every ${intervalMins} minute(s).`);
-          takeAndSaveScreenshot(); // take one immediately
+          takeAndSaveScreenshot();
         };
       }).catch((err) => {
         log(`GetUserMedia error: ${err.message}`);
@@ -72,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Stop Capture
   stopBtn.addEventListener('click', stopCapture);
 
   function stopCapture() {
@@ -85,23 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
       currentStream = null;
     }
     
-    startBtn.style.display = 'inline-block';
+    startBtn.style.display = 'block';
     stopBtn.style.display = 'none';
-    tabSelect.disabled = false;
     intervalInput.disabled = false;
     log(`Stopped capturing.`);
   }
 
-  // 4. Take Screenshot and Save
   function takeAndSaveScreenshot() {
     if (!currentStream || !video.videoWidth) return;
 
     try {
-      // Draw video frame to canvas
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      // Get Data URL
       const dataUrl = canvas.toDataURL('image/png');
 
       screenshotCount++;
@@ -109,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const timestamp = now.toISOString().replace(/[:.]/g, '-').substring(0, 19);
       const filename = `auto_screenshot_${timestamp}_${screenshotCount.toString().padStart(4, '0')}.png`;
 
-      // Download using Chrome API
       chrome.downloads.download({
         url: dataUrl,
         filename: `auto_screenshots/${filename}`,
@@ -118,11 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chrome.runtime.lastError) {
           log(`❌ File save error: ${chrome.runtime.lastError.message}`);
         } else {
-          log(`✅ Saved: ${filename} to Downloads/auto_screenshots/`);
+          log(`✅ Saved: ${filename}`);
         }
       });
 
-      // Update preview
       previewImg.src = dataUrl;
       previewImg.style.display = 'block';
 
